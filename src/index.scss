@@ -1,0 +1,49 @@
+@import-normalize;
+@import "helper.scss";
+* {
+  margin: 0;
+  padding: 0;
+}
+* {
+  box-sizing: border-box;
+}
+*::before {
+  box-sizing: border-box;
+}
+*::after {
+  box-sizing: border-box;
+}
+ul,
+ol {
+  list-style: none;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+body {
+  font-family: $font-hei;
+  font-size: 16px;
+  line-height: 1.2;
+}
+:focus {
+  outline: none;
+}
+button,
+input {
+  font: inherit;
+}
+.icon {
+  width: 1em;
+  height: 1em;
+}
+.clearfix::after {
+  content: "";
+  display: block;
+  clear: both;
+}
+.oneLineEllipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
