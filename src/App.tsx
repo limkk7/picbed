@@ -4,6 +4,7 @@ import {Header} from 'components/Header';
 import {Footer} from 'components/Footer';
 import {Loading} from 'components/Loading';
 import styled from 'styled-components';
+const Login = lazy(() => import('pages/Login'));
 const Home = lazy(() => import('pages/Home'));
 const History = lazy(() => import('pages/History'));
 const About = lazy(() => import('pages/About'));
@@ -31,6 +32,7 @@ function App() {
             <Route path="/" exact component={Home} />
             <Route path="/history" exact component={History} />
             <Route path="/about" exact component={About} />
+            <Route path="/login" exact component={Login} />
           </Switch>
         </Suspense>
       </Main>
