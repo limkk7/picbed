@@ -3,6 +3,7 @@ import {Switch, Route} from 'react-router-dom';
 import {Header} from 'components/Header';
 import {Footer} from 'components/Footer';
 import {Loading} from 'components/Loading';
+import styled from 'styled-components';
 const Home = lazy(() => import('pages/Home'));
 const History = lazy(() => import('pages/History'));
 const About = lazy(() => import('pages/About'));
@@ -10,19 +11,31 @@ const About = lazy(() => import('pages/About'));
 // import History from 'pages/History';
 // import About from 'pages/About';
 
+const Main = styled.main`
+  flex-grow: 1;
+  padding: 10px 100px;
+`;
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+`;
+
 function App() {
   return (
-    <div className="App">
+    <Wrapper>
       <Header />
-      <Suspense fallback={<Loading />}>
-        <Switch>
-          <Route path="/" exact component={Home} />
-          <Route path="/history" exact component={History} />
-          <Route path="/about" exact component={About} />
-        </Switch>
-      </Suspense>
+      <Main>
+        <Suspense fallback={<Loading />}>
+          <Switch>
+            <Route path="/" exact component={Home} />
+            <Route path="/history" exact component={History} />
+            <Route path="/about" exact component={About} />
+          </Switch>
+        </Suspense>
+      </Main>
       <Footer />
-    </div>
+    </Wrapper>
   );
 }
 

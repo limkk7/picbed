@@ -1,5 +1,5 @@
 @import-normalize;
-@import "helper.scss";
+@import 'helper.scss';
 * {
   margin: 0;
   padding: 0;
@@ -24,7 +24,8 @@ a {
 body {
   font-family: $font-hei;
   font-size: 16px;
-  line-height: 1.2;
+  line-height: 1.6;
+  background-color: #eceff2;
 }
 :focus {
   outline: none;
@@ -38,7 +39,7 @@ input {
   height: 1em;
 }
 .clearfix::after {
-  content: "";
+  content: '';
   display: block;
   clear: both;
 }
