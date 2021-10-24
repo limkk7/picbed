@@ -1,5 +1,8 @@
 import {Form, Input, Button} from 'antd';
+import {useHistory} from 'react-router';
+import {useStores} from 'stores';
 import styled from 'styled-components';
+
 const Wrapper = styled.div`
   max-width: 600px;
   margin: 30px auto;
@@ -7,10 +10,29 @@ const Wrapper = styled.div`
   border-radius: 4px;
   padding: 20px 30px;
 `;
-
+type UserInfo = {
+  username: string;
+  password: string;
+  confirmPassword: string;
+};
 const SignUp = () => {
-  const onFinish = (values: any) => {
-    console.log('Success:', values);
+  const {AuthStore} = useStores();
+  const history = useHistory();
+
+  const onFinish = (values: UserInfo) => {
+    console.log('sign up', values);
+    AuthStore.setUsername(values.username);
+    AuthStore.setPassword(values.password);
+
+    AuthStore.signUp()
+      .then(user => {
+        console.log('component: sign up success', user);
+        history.push('/');
+      })
+      .catch(e => {
+        alert(e);
+        console.log('component: sign up failed', e);
+      });
   };
 
   const onFinishFailed = (errorInfo: any) => {
@@ -41,7 +63,7 @@ const SignUp = () => {
               message: '请输入用户名',
             },
             {
-              min: 4,
+              min: 3,
               message: '用户名长度不能小于3',
             },
             {
@@ -68,7 +90,7 @@ const SignUp = () => {
               message: '请输入密码!',
             },
             {
-              min: 4,
+              min: 3,
               message: '最少4字符',
             },
           ]}

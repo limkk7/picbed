@@ -1,7 +1,9 @@
 import {makeAutoObservable, runInAction} from 'mobx';
+import {AuthModels} from 'models';
+import {UserStore} from './user';
 
 // class Store {
-//   isLogin = false;
+//   isSignIn = false;
 //   isLoading = false;
 //   values = {
 //     username: 'haha',
@@ -11,8 +13,8 @@ import {makeAutoObservable, runInAction} from 'mobx';
 //     makeAutoObservable(this);
 //   }
 
-//   setIsLogin(isLogin: boolean) {
-//     this.isLogin = isLogin;
+//   setIsSignIn(isSignIn: boolean) {
+//     this.isSignIn = isSignIn;
 //   }
 //   setUsername(username: string) {
 //     this.values.username = username;
@@ -20,12 +22,12 @@ import {makeAutoObservable, runInAction} from 'mobx';
 //   setPassword(passWord: string) {
 //     this.values.password = passWord;
 //   }
-//   login() {
+//   signIn() {
 //     console.log('登录中...');
 //     this.isLoading = true;
 //     setTimeout(() => {
 //       console.log('登录成功');
-//       this.isLogin = true;
+//       this.isSignIn = true;
 //       this.isLoading = false;
 //     }, 1000);
 //   }
@@ -35,7 +37,7 @@ import {makeAutoObservable, runInAction} from 'mobx';
 //     setTimeout(() => {
 //       console.log('注册成功');
 //       runInAction(() => {
-//         this.isLogin = false;
+//         this.isSignIn = false;
 //         this.isLoading = false;
 //       });
 //     }, 1000);
@@ -44,18 +46,18 @@ import {makeAutoObservable, runInAction} from 'mobx';
 //     console.log('已注销');
 //   }
 // }
-// const AuthStore = Store;
+// const AuthStore = new Store();
 
 const store = {
-  isLogin: false,
+  isSignIn: false,
   isLoading: false,
   values: {
-    username: 'haha',
-    password: '123',
+    username: '',
+    password: '',
   },
 
-  setIsLogin(isLogin: boolean) {
-    this.isLogin = isLogin;
+  setIsSignIn(isSignIn: boolean) {
+    this.isSignIn = isSignIn;
   },
   setUsername(username: string) {
     this.values.username = username;
@@ -63,31 +65,57 @@ const store = {
   setPassword(passWord: string) {
     this.values.password = passWord;
   },
-  login() {
-    console.log('登录中...');
+  signIn() {
+    console.log('authStore: 登录中...');
     this.isLoading = true;
-    setTimeout(() => {
-      console.log('登录成功');
-      this.isLogin = true;
-      this.isLoading = false;
-    }, 1000);
-  },
-  async regiser() {
-    console.log('注册中...');
-    this.isLoading = true;
-    await new Promise(() => {
-      setTimeout(() => {
-        console.log('注册成功');
-        runInAction(() => {
-          this.isLogin = false;
-          this.isLoading = false;
+    return new Promise((resolve, reject) => {
+      AuthModels.signIn(this.values.username, this.values.password)
+        .then(user => {
+          console.log('authStore: 登录成功', user);
+          runInAction(() => {
+            UserStore.setCurrentUser();
+            console.log('authStore:', UserStore.currentUser);
+            console.log('authStore: sign in runInAction');
+            this.isSignIn = true;
+            this.isLoading = false;
+          });
+          resolve(user);
+        })
+        .catch(err => {
+          console.log('authStore: 登录失败', err);
+          console.log('authStore:', UserStore.currentUser);
+          reject(err);
         });
-      }, 1000);
     });
   },
-  logout() {
-    console.log('已注销');
+  signUp() {
+    console.log('authStore: 注册中...');
+    this.isLoading = true;
+    return new Promise((resolve, reject) => {
+      AuthModels.signUp(this.values.username, this.values.password).then(
+        user => {
+          console.log('authStore: 注册成功', user);
+          runInAction(() => {
+            UserStore.setCurrentUser();
+            console.log('authStore:', UserStore.currentUser);
+            console.log('authStore: sign up runInAction');
+            this.isSignIn = false;
+            this.isLoading = false;
+          });
+          resolve(user);
+        },
+        err => {
+          console.log('authStore: 注册失败', err);
+          console.log('authStore:', UserStore.currentUser);
+          reject(err);
+        }
+      );
+    });
+  },
+  logOut() {
+    AuthModels.logOut();
+    UserStore.setCurrentUser();
   },
 };
-const AuthStore = () => makeAutoObservable(store);
+const AuthStore = makeAutoObservable(store);
 export {AuthStore};

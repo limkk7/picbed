@@ -1,4 +1,6 @@
 import {Form, Input, Button} from 'antd';
+import {useHistory} from 'react-router';
+import {useStores} from 'stores';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
@@ -9,9 +11,27 @@ const Wrapper = styled.div`
   padding: 20px 30px;
 `;
 
+type UserInfo = {
+  username: string;
+  password: string;
+};
+
 const SignIn = () => {
-  const onFinish = (values: any) => {
-    console.log('Success:', values);
+  const {AuthStore} = useStores();
+  const history = useHistory();
+  const onFinish = (values: UserInfo) => {
+    console.log('sign in', values);
+    AuthStore.setUsername(values.username);
+    AuthStore.setPassword(values.password);
+    AuthStore.signIn()
+      .then(user => {
+        console.log('component: sign in success', user);
+        history.push(`/`);
+      })
+      .catch(e => {
+        alert(e);
+        console.log('component: sign in failed', e);
+      });
   };
 
   const onFinishFailed = (errorInfo: any) => {

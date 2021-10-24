@@ -1,5 +1,6 @@
-import {useState} from 'react';
+import {observer} from 'mobx-react';
 import {NavLink} from 'react-router-dom';
+import {useStores} from 'stores';
 import styled from 'styled-components';
 import logo from './logo.svg';
 
@@ -9,6 +10,17 @@ const HeaderWrapper = styled.header`
   align-items: center;
   padding: 10px 100px;
   justify-content: space-between;
+  > div {
+    color: #ffffff;
+    > button,
+    a {
+      margin-left: 10px;
+      border: 1px solid #ffffff;
+      padding: 10px;
+      cursor: pointer;
+      background-color: transparent;
+    }
+  }
   @media (max-width: 700px) {
     padding: 10px 30px;
   }
@@ -27,22 +39,13 @@ const Nav = styled.nav`
 const Logo = styled.img`
   height: 50px;
 `;
-const ButtonWrapper = styled.div`
-  a {
-    margin-left: 10px;
-    border: 1px solid #ffffff;
-    padding: 10px;
-    > button {
-      cursor: pointer;
-      background-color: transparent;
-      border: 0;
-      color: #ffffff;
-    }
-  }
-`;
 
-const Header: React.FC = () => {
-  const [isSignIn, setSignUp] = useState(false);
+const Header: React.FC = observer(() => {
+  const {UserStore, AuthStore} = useStores();
+  const handleLogOut = () => {
+    AuthStore.logOut();
+  };
+  console.log(UserStore.currentUser?.attributes);
   return (
     <HeaderWrapper>
       <Nav>
@@ -57,27 +60,19 @@ const Header: React.FC = () => {
           关于
         </NavLink>
       </Nav>
-      <ButtonWrapper>
-        {isSignIn ? (
-          <>
-            haha1
-            <NavLink to="/">
-              <button>注销</button>
-            </NavLink>
-          </>
-        ) : (
-          <>
-            <NavLink to="/signin">
-              <button>登录</button>
-            </NavLink>
-            <NavLink to="/signup">
-              <button>注册</button>
-            </NavLink>
-          </>
-        )}
-      </ButtonWrapper>
+      {UserStore.currentUser ? (
+        <div>
+          <span>{UserStore.currentUser.attributes.username}</span>
+          <button onClick={handleLogOut}>注销</button>
+        </div>
+      ) : (
+        <div>
+          <NavLink to="/signIn">登录</NavLink>
+          <NavLink to="/signUp">注册</NavLink>
+        </div>
+      )}
     </HeaderWrapper>
   );
-};
+});
 
 export {Header};
