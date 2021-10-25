@@ -1,8 +1,8 @@
 import AV, {User} from 'leancloud-storage';
+import config from 'config';
+
 AV.init({
-  appId: 'Ad46YKbNw2plrBhsEIeGHoqP-gzGzoHsz',
-  appKey: 'vXDbKIsxXI3B3q9DNL6dS5uk',
-  serverURL: 'https://uqbaasqm.lc-cn-n1-shared.com',
+  ...config.leancloud,
 });
 
 console.log('models: start....');
@@ -48,22 +48,34 @@ const AuthModels = {
 };
 
 const UploadModels = {
-  add(file: File | null, filename: string) {
+  add(file: File, filename: string) {
     const item = new AV.Object('Image');
     const avFile = new AV.File(filename, file);
     item.set('filename', filename);
     item.set('owner', AV.User.current());
     item.set('url', avFile);
-    return item.save().then(
-      serverFile => {
-        console.log('保存成功');
-        return Promise.resolve(serverFile);
-      },
-      e => {
-        console.log('保存失败');
-        return Promise.reject(e);
-      }
-    );
+    return new Promise((resolve, reject) => {
+      item.save().then(
+        serverFile => {
+          console.log('保存成功');
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = () => {
+            const str = reader.result;
+            if (typeof str === 'string') {
+              const baseStr = str?.slice(str.indexOf(',') + 1, str.length);
+              console.log(baseStr);
+              uploadGithub(filename, baseStr);
+              resolve(serverFile);
+            }
+          };
+        },
+        e => {
+          console.log('保存失败');
+          reject(e);
+        }
+      );
+    });
   },
   find({page = 0, limit = 10}): Promise<AV.Queriable[]> {
     const query = new AV.Query('Image');
@@ -80,5 +92,28 @@ const UploadModels = {
     });
   },
 };
+function uploadGithub(name: string, dataImage: string) {
+  const data = JSON.stringify({
+    message: name,
+    content: dataImage,
+  });
+
+  const xhr = new XMLHttpRequest();
+  xhr.withCredentials = true;
+
+  xhr.addEventListener('readystatechange', function () {
+    if (this.readyState === this.DONE) {
+      console.log(this.responseText);
+    }
+  });
+
+  xhr.open('PUT', `https://api.github.com/repos/filomenaoktprince/image/contents/${name}.png`);
+  // xhr.setRequestHeader("user-agent", "vscode-restclient");
+  xhr.setRequestHeader('content-type', 'application/json');
+  xhr.setRequestHeader('accept', 'application/vnd.github.v3+json');
+  xhr.setRequestHeader('authorization', 'token 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');
+
+  xhr.send(data);
+}
 
 export {AuthModels, UploadModels};

@@ -6,7 +6,7 @@ import {List, Spin} from 'antd';
 import styled from 'styled-components';
 
 const Img = styled.img`
-  width: 100px;
+  width: 120px;
   height: 120px;
   object-fit: contain;
   border: 1px solid #eee;
@@ -26,7 +26,7 @@ const Component = observer(() => {
       console.log('卸载');
       HistoryStore.reset();
     };
-  }, []);
+  }, [HistoryStore]);
 
   return (
     <div id="">

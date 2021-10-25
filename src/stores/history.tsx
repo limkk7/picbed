@@ -2,6 +2,7 @@ import {makeAutoObservable} from 'mobx';
 import AV from 'leancloud-storage';
 import {UploadModels} from 'models';
 import {message} from 'antd';
+import config from 'config';
 
 type UploadFile = {
   id: number;
@@ -34,7 +35,7 @@ const historyStore: History = {
         id: idx,
         fileId: x.id,
         filename: x.get('filename'),
-        url: `https://upload.verionlin7.com/${x.id}`,
+        url: `${config.imageUrl}${x.id}.png`,
       }))
     );
   },
