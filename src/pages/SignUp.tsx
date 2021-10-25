@@ -30,7 +30,6 @@ const SignUp = () => {
         history.push('/');
       })
       .catch(e => {
-        alert(e);
         console.log('component: sign up failed', e);
       });
   };

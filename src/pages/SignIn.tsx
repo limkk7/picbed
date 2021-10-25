@@ -29,7 +29,6 @@ const SignIn = () => {
         history.push(`/`);
       })
       .catch(e => {
-        alert(e);
         console.log('component: sign in failed', e);
       });
   };

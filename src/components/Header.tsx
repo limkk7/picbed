@@ -1,6 +1,7 @@
 import {observer} from 'mobx-react';
 import {NavLink} from 'react-router-dom';
 import {useStores} from 'stores';
+import {HistoryStore} from 'stores/history';
 import styled from 'styled-components';
 import logo from './logo.svg';
 
@@ -44,8 +45,8 @@ const Header: React.FC = observer(() => {
   const {UserStore, AuthStore} = useStores();
   const handleLogOut = () => {
     AuthStore.logOut();
+    HistoryStore.reset();
   };
-  console.log(UserStore.currentUser?.attributes);
   return (
     <HeaderWrapper>
       <Nav>
@@ -62,7 +63,7 @@ const Header: React.FC = observer(() => {
       </Nav>
       {UserStore.currentUser ? (
         <div>
-          <span>{UserStore.currentUser.attributes.username}</span>
+          <span>用户：{UserStore.currentUser.getUsername()}</span>
           <button onClick={handleLogOut}>注销</button>
         </div>
       ) : (

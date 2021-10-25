@@ -1,12 +1,14 @@
+import {message} from 'antd';
 import {makeAutoObservable, runInAction} from 'mobx';
 import {AuthModels} from 'models';
+import {ImageStore} from './image';
 import {UserStore} from './user';
 
 // class Store {
 //   isSignIn = false;
 //   isLoading = false;
 //   values = {
-//     username: 'haha',
+//     username: '',
 //     password: '123',
 //   };
 //   constructor() {
@@ -31,7 +33,7 @@ import {UserStore} from './user';
 //       this.isLoading = false;
 //     }, 1000);
 //   }
-//   regiser() {
+//   register() {
 //     console.log('注册中...');
 //     this.isLoading = true;
 //     setTimeout(() => {
@@ -82,8 +84,7 @@ const store = {
           resolve(user);
         })
         .catch(err => {
-          console.log('authStore: 登录失败', err);
-          console.log('authStore:', UserStore.currentUser);
+          message.error(`登录失败: ${err.message}`);
           reject(err);
         });
     });
@@ -105,8 +106,7 @@ const store = {
           resolve(user);
         },
         err => {
-          console.log('authStore: 注册失败', err);
-          console.log('authStore:', UserStore.currentUser);
+          message.error(`注册失败: ${err.message}`);
           reject(err);
         }
       );
@@ -115,6 +115,7 @@ const store = {
   logOut() {
     AuthModels.logOut();
     UserStore.setCurrentUser();
+    ImageStore.serverFile = null;
   },
 };
 const AuthStore = makeAutoObservable(store);
