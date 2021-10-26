@@ -77,10 +77,10 @@ const Uploader: React.FC = observer(() => {
                 {ImageStore.serverFile.url}
               </a>
             </dd>
-            <dt>预览</dt>
+            {/* <dt>预览</dt>
             <dd>
               <img src={ImageStore.serverFile.url} alt="" />
-            </dd>
+            </dd> */}
             {/* <dt>更多尺寸</dt>
             <dd>
               <input placeholder="最大宽度" />

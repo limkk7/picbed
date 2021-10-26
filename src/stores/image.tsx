@@ -2,6 +2,7 @@ import {message} from 'antd';
 import {makeAutoObservable} from 'mobx';
 import {UploadModels} from 'models';
 import config from 'config';
+import {UserStore} from './user';
 
 type UploadFile = {
   fileId: string | undefined;
@@ -36,7 +37,7 @@ const store: Store = {
     if (!this.file) return Promise.resolve();
     this.isUploading = true;
     this.serverFile = null;
-    return UploadModels.add(this.file, this.filename)
+    return UploadModels.add(this.file, this.filename, UserStore.currentUser?.getUsername())
       .then(
         (serverFile: any) => {
           console.log(serverFile);

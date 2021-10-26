@@ -48,7 +48,7 @@ const AuthModels = {
 };
 
 const UploadModels = {
-  add(file: File, filename: string) {
+  add(file: File, filename: string, username: string | undefined) {
     const item = new AV.Object('Image');
     const avFile = new AV.File(filename, file);
     item.set('filename', filename);
@@ -65,7 +65,7 @@ const UploadModels = {
             if (typeof str === 'string') {
               const baseStr = str?.slice(str.indexOf(',') + 1, str.length);
               console.log(baseStr);
-              uploadGithub(filename, baseStr);
+              uploadGithub(serverFile.id, baseStr, username);
               resolve(serverFile);
             }
           };
@@ -92,28 +92,24 @@ const UploadModels = {
     });
   },
 };
-function uploadGithub(name: string, dataImage: string) {
+function uploadGithub(name: string | undefined, dataImage: string, username: string | undefined) {
   const data = JSON.stringify({
-    message: name,
+    message: `${username}：${name}`,
     content: dataImage,
   });
-
-  const xhr = new XMLHttpRequest();
-  xhr.withCredentials = true;
-
-  xhr.addEventListener('readystatechange', function () {
-    if (this.readyState === this.DONE) {
-      console.log(this.responseText);
-    }
-  });
-
-  xhr.open('PUT', `https://api.github.com/repos/filomenaoktprince/image/contents/${name}.png`);
-  // xhr.setRequestHeader("user-agent", "vscode-restclient");
-  xhr.setRequestHeader('content-type', 'application/json');
-  xhr.setRequestHeader('accept', 'application/vnd.github.v3+json');
-  xhr.setRequestHeader('authorization', 'token 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');
-
-  xhr.send(data);
+  fetch(`https://solitary-union-ab10.limkk.workers.dev/upload-image?fileId=${name}`, {
+    body: data,
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+    },
+  })
+    .then(response => {
+      console.log(response);
+    })
+    .catch(err => {
+      console.error(err);
+    });
 }
 
 export {AuthModels, UploadModels};
