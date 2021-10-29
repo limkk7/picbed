@@ -16,7 +16,7 @@ const Home: React.FC = observer(() => {
     <>
       {UserStore.currentUser ? (
         <>
-          <h1>{UserStore.currentUser.getUsername()}</h1>
+          <h2>Hello! {UserStore.currentUser.getUsername()}</h2>
           <Tips>图片上传后 github pages 生效较慢 请耐心等待。可以在上传历史页获取链接</Tips>
           <Uploader />
         </>
