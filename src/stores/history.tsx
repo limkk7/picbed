@@ -27,7 +27,7 @@ const historyStore: History = {
   isLoading: false,
   hasMore: true,
   page: 0,
-  limit: 6,
+  limit: 10,
 
   append(newList) {
     this.list = this.list.concat(
